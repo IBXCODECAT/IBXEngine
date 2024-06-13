@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            using (GameInstance game = new(800, 600, "Learning OpenTK"))
+            {
+                game.Run();
+            }
         }
     }
 }
