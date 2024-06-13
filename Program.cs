@@ -2,12 +2,10 @@
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            using (GameInstance game = new(800, 600, "Learning OpenTK"))
-            {
-                game.Run();
-            }
+            using GameInstance game = new(800, 600, "Learning OpenTK");
+            game.Run();
         }
     }
 }
