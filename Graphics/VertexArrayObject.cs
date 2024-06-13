@@ -55,6 +55,7 @@ namespace LearningOpenTK.Graphics
         {
             if (!disposedValue)
             {
+                UnbindCurrent();
                 GL.DeleteVertexArray(Handle);
                 disposedValue = true;
             }

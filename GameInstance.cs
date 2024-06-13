@@ -32,14 +32,20 @@ namespace LearningOpenTK
         }
 
         private readonly float[] vertices = [
-            -0.5f, -0.5f, 0.0f, //Bottom-left vertex
-             0.5f, -0.5f, 0.0f, //Bottom-right vertex
-             0.0f,  0.5f, 0.0f  //Top vertex
+             0.5f,  0.5f, 0.0f,  // top right
+             0.5f, -0.5f, 0.0f,  // bottom right
+            -0.5f, -0.5f, 0.0f,  // bottom left
+            -0.5f,  0.5f, 0.0f   // top left
         ];
 
+        private readonly uint[] indices = [
+            0, 1, 3,
+            1, 2, 3
+        ];
 
         private VertexBufferObject vbo;
         private VertexArrayObject vao;
+        private ElementBufferObject ebo;
 
         private ShaderProgram shader;
 
@@ -51,17 +57,18 @@ namespace LearningOpenTK
 
             vao = new();
             vbo = new();
+            ebo = new();
 
             shader = new("Assets/shader.vert", "Assets/shader.frag");
 
             shader.Use();
 
-            vbo.Bind();
             vbo.SetData(vertices, BufferUsageHint.StaticDraw);
 
-            vao.Bind();
             vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float));
             vao.EnableVertexAttribute(0);
+
+            ebo.BufferData(indices, BufferUsageHint.StaticDraw);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -70,7 +77,7 @@ namespace LearningOpenTK
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
             SwapBuffers();
         }
@@ -79,6 +86,7 @@ namespace LearningOpenTK
         {
             base.OnUnload();
 
+            ebo.Dispose();
             vao.Dispose();
             vbo.Dispose();
             shader.Dispose();
