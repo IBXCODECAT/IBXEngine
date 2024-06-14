@@ -5,13 +5,12 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using OpenTK.Mathematics;
 
 namespace LearningOpenTK
 {
     internal class GameInstance(int width, int height, string title) : GameWindow(new GameWindowSettings(), new NativeWindowSettings()
     {
-        ClientSize = new OpenTK.Mathematics.Vector2i(width, height),
+        ClientSize = new Vector2i(width, height),
         Title = title,
     })
     {
@@ -21,15 +20,83 @@ namespace LearningOpenTK
             base.OnFramebufferResize(e);
 
             GL.Viewport(0, 0, e.Width, e.Height);
+
+            // We need to update the aspect ratio once the window has been resized.
+            camera.AspectRatio = Size.X / (float)Size.Y;
+        }
+
+        /// <summary>
+        /// Change the field of view of the camera based on the mouse wheel input.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            camera.Fov -= e.OffsetY;
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
+            
+            if (!IsFocused) // Check to see if the window is focused
+            {
+                return;
+            }
 
-            if(KeyboardState.IsKeyDown(Keys.Escape))
+            if (KeyboardState.IsKeyDown(Keys.Escape))
             {
                 Close();
+            }
+
+            const float cameraSpeed = 1.5f;
+            const float sensitivity = 0.2f;
+
+            if (KeyboardState.IsKeyDown(Keys.W))
+            {
+                camera.Position += camera.Front * cameraSpeed * (float)args.Time; // Forward
+            }
+
+            if (KeyboardState.IsKeyDown(Keys.S))
+            {
+                camera.Position -= camera.Front * cameraSpeed * (float)args.Time; // Backwards
+            }
+            if (KeyboardState.IsKeyDown(Keys.A))
+            {
+                camera.Position -= camera.Right * cameraSpeed * (float)args.Time; // Left
+            }
+            if (KeyboardState.IsKeyDown(Keys.D))
+            {
+                camera.Position += camera.Right * cameraSpeed * (float)args.Time; // Right
+            }
+            if (KeyboardState.IsKeyDown(Keys.Space))
+            {
+                camera.Position += camera.Up * cameraSpeed * (float)args.Time; // Up
+            }
+            if (KeyboardState.IsKeyDown(Keys.LeftShift))
+            {
+                camera.Position -= camera.Up * cameraSpeed * (float)args.Time; // Down
+            }
+
+            // Get the mouse state
+            var mouse = MouseState;
+
+            if (camera.FirstMove) // This bool variable is initially set to true.
+            {
+                camera.LastPosition = new Vector2(mouse.X, mouse.Y);
+                camera.FirstMove = false;
+            }
+            else
+            {
+                // Calculate the offset of the mouse position
+                var deltaX = mouse.X - camera.LastPosition.X;
+                var deltaY = mouse.Y - camera.LastPosition.Y;
+                camera.LastPosition = new Vector2(mouse.X, mouse.Y);
+
+                // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
+                camera.Yaw += deltaX * sensitivity;
+                camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
         }
 
@@ -98,6 +165,8 @@ namespace LearningOpenTK
         private Texture mainTexture;
         private Texture secondaryTexture;
 
+        private Camera camera;
+
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -140,6 +209,13 @@ namespace LearningOpenTK
             vao.VertexAttributePointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             
             ebo.BufferData(indices, BufferUsageHint.StaticDraw);
+
+            // We initialize the camera so that it is 3 units back from where the rectangle is.
+            // We also give it the proper aspect ratio.
+            camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+
+            // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
+            CursorState = CursorState.Grabbed;
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -157,8 +233,8 @@ namespace LearningOpenTK
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), width / height, 0.1f, 100.0f);
 
             shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", view);
-            shader.SetMatrix4("projection", projection);
+            shader.SetMatrix4("view", camera.GetViewMatrix());
+            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
