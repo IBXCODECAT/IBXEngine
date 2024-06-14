@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 namespace LearningOpenTK.Graphics
 {
@@ -35,6 +36,7 @@ namespace LearningOpenTK.Graphics
             if (vertexCompileStatus == 0)
             {
                 string infoLog = GL.GetShaderInfoLog(VertexShader);
+                Console.WriteLine($"Error occurred whilst compiling Vertex Shader({vertexPath}): {infoLog}");
                 throw new Exception($"Error occurred whilst compiling Vertex Shader({vertexPath}): {infoLog}");
             }
 
@@ -109,9 +111,16 @@ namespace LearningOpenTK.Graphics
 
         public void SetInt(string name, int value)
         {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
             int location = GL.GetUniformLocation(Handle, name);
-
             GL.Uniform1(location, value);
+        }
+
+        public void SetMatrix4(string name, Matrix4 matrix)
+        {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
+            int location = GL.GetUniformLocation(Handle, name);
+            GL.UniformMatrix4(location, true, ref matrix);
         }
 
         /// <summary>

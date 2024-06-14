@@ -35,16 +35,58 @@ namespace LearningOpenTK
 
         private readonly float[] vertices =
         [
-            //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+            // Front face
+            -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
+            // Back face
+            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
+            // Left face
+            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
+            -1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+            // Right face
+             1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
+             1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+            // Top face
+            -1.0f,  1.0f, -1.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
+            // Bottom face
+            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
+             1.0f, -1.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
         ];
 
-        private readonly uint[] indices = [
-            0, 1, 3,
-            1, 2, 3
+        private readonly uint[] indices = 
+        [
+            // Front face
+            0, 1, 2,
+            2, 3, 0,
+            // Back face
+            4, 5, 6,
+            6, 7, 4,
+            // Left face
+            8, 9, 10,
+            10, 11, 8,
+            // Right face
+            12, 13, 14,
+            14, 15, 12,
+            // Top face
+            16, 17, 18,
+            18, 19, 16,
+            // Bottom face
+            20, 21, 22,
+            22, 23, 20,
         ];
 
         private VertexBufferObject vbo;
@@ -59,6 +101,8 @@ namespace LearningOpenTK
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            GL.Enable(EnableCap.DepthTest);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
@@ -100,15 +144,22 @@ namespace LearningOpenTK
 
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+
             base.OnRenderFrame(args);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(90f));
-            Matrix4 scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
-            Matrix4 translation = rotation * scale;
+            Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
 
-            GL.UniformMatrix4(shader.GetUniformLocation("transform"), true, ref translation);
+            // Note that we're translating the scene in the reverse direction of where we want to move.
+            Matrix4 view = Matrix4.CreateTranslation(0.0f, MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds), -3.0f);
+
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), width / height, 0.1f, 100.0f);
+
+            shader.SetMatrix4("model", model);
+            shader.SetMatrix4("view", view);
+            shader.SetMatrix4("projection", projection);
+
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
