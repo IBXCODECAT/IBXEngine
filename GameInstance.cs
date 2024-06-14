@@ -4,6 +4,7 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using StbImageSharp;
 
 namespace LearningOpenTK
 {
@@ -31,11 +32,13 @@ namespace LearningOpenTK
             }
         }
 
-        private readonly float[] vertices = [
-             0.5f,  0.5f, 0.0f,  // top right
-             0.5f, -0.5f, 0.0f,  // bottom right
-            -0.5f, -0.5f, 0.0f,  // bottom left
-            -0.5f,  0.5f, 0.0f   // top left
+        private readonly float[] vertices =
+        [
+            //Position          Texture coordinates
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
         ];
 
         private readonly uint[] indices = [
@@ -49,6 +52,8 @@ namespace LearningOpenTK
 
         private ShaderProgram shader;
 
+        private Texture texture;
+
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -59,15 +64,29 @@ namespace LearningOpenTK
             vbo = new();
             ebo = new();
 
+            texture = new("Assets/pfp.png");
             shader = new("Assets/shader.vert", "Assets/shader.frag");
 
             shader.Use();
 
+            texture.Use(TextureUnit.Texture0);
+
             vbo.SetData(vertices, BufferUsageHint.StaticDraw);
 
-            vao.VertexAttributePointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float));
-            vao.EnableVertexAttribute(0);
+            // Because there's now 5 floats between the start of the first vertex and the start of the second,
+            // we modify the stride from 3 * sizeof(float) to 5 * sizeof(float).
+            // This will now pass the new vertex array to the buffer.
+            int vertexLocation = shader.GetAttributeLocation("aPosition");
+            vao.EnableVertexAttribute(vertexLocation);
+            vao.VertexAttributePointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float));
 
+            // Next, we also setup texture coordinates. It works in much the same way.
+            // We add an offset of 3, since the texture coordinates comes after the position data.
+            // We also change the amount of data to 2 because there's only 2 floats for texture coordinates.
+            int texCoordLocation = shader.GetAttributeLocation("aTexCoord");
+            vao.EnableVertexAttribute(texCoordLocation);
+            vao.VertexAttributePointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            
             ebo.BufferData(indices, BufferUsageHint.StaticDraw);
         }
 
@@ -90,6 +109,8 @@ namespace LearningOpenTK
             vao.Dispose();
             vbo.Dispose();
             shader.Dispose();
+
+            texture.Dispose();
         }
     }
 }

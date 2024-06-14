@@ -12,20 +12,12 @@ namespace LearningOpenTK.Graphics
         public int Handle { get; private set; }
 
         /// <summary>
-        /// The path to this program's vertex shader file
+        /// The maximum number of vertex attributes for the vertex shader on the current hardware
         /// </summary>
-        public string VertexPath { get; private set; }
-
-        /// <summary>
-        /// The path to this program's fragment shader file
-        /// </summary>
-        public string FragmentPath { get; private set; }
+        public static int MaxVertexAttributes { get { return GL.GetInteger(GetPName.MaxVertexAttribs); } }
 
         public ShaderProgram(string vertexPath, string fragmentPath)
         {
-            VertexPath = vertexPath;
-            FragmentPath = fragmentPath;
-
             // Read the shader source from the vertex shader file
             string VertexShaderSource = File.ReadAllText(vertexPath);
 
@@ -97,7 +89,11 @@ namespace LearningOpenTK.Graphics
         /// Gets the location of a uniform in the shader program
         /// </summary>
         /// <returns>The location for the attribute specified</returns>
-        public int GetAttributeLocation(string attribName) => GL.GetAttribLocation(Handle, attribName);
+        public int GetAttributeLocation(string attribName)
+        {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
+            return GL.GetAttribLocation(Handle, attribName);
+        }
 
         /// <summary>
         /// Use the shader program for rendering
