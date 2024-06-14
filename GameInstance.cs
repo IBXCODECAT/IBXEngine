@@ -4,6 +4,8 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 
 namespace LearningOpenTK
 {
@@ -101,6 +103,12 @@ namespace LearningOpenTK
             base.OnRenderFrame(args);
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
+
+            Matrix4 rotation = Matrix4.CreateRotationZ(MathHelper.DegreesToRadians(90f));
+            Matrix4 scale = Matrix4.CreateScale(0.5f, 0.5f, 0.5f);
+            Matrix4 translation = rotation * scale;
+
+            GL.UniformMatrix4(shader.GetUniformLocation("transform"), true, ref translation);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 

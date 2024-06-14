@@ -115,6 +115,17 @@ namespace LearningOpenTK.Graphics
         }
 
         /// <summary>
+        /// Gets the location of a uniform in the shader program
+        /// </summary>
+        /// <param name="name">The name of the uniform</param>
+        /// <returns>The uniform location</returns>
+        public int GetUniformLocation(string name)
+        {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
+            return GL.GetUniformLocation(Handle, name);
+        }
+
+        /// <summary>
         /// Called when the object is being disposed of
         /// </summary>
         protected virtual void Dispose(bool disposing)

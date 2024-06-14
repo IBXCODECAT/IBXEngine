@@ -5,6 +5,8 @@ in vec2 aUVCoord; // Texture coordinates are input to the vertex shader...
 
 out vec2 uvCoord; // UV Coordinates are output from the vertex shader to the fragment shader...
 
+uniform mat4 transform;
+
 void main(void)
 {
     // Then, we further the input texture coordinate to the output one.
@@ -13,5 +15,5 @@ void main(void)
     // We don't need to do anything with the UVs, so we just pass them through to the fragment shader.
     uvCoord = aUVCoord;
 
-    gl_Position = vec4(aPosition, 1.0);
+    gl_Position = vec4(aPosition, 1.0f) * transform;
 }
