@@ -20,7 +20,7 @@ namespace LearningOpenTK.Buffers
         /// <summary>
         /// Binds the buffer object to the current context
         /// </summary>
-        public void Bind()
+        private void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
             GL.BindBuffer(BufferTarget.ArrayBuffer, Handle);

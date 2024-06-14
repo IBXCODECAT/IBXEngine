@@ -4,7 +4,6 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using StbImageSharp;
 
 namespace LearningOpenTK
 {
@@ -52,7 +51,8 @@ namespace LearningOpenTK
 
         private ShaderProgram shader;
 
-        private Texture texture;
+        private Texture mainTexture;
+        private Texture secondaryTexture;
 
         protected override void OnLoad()
         {
@@ -64,12 +64,18 @@ namespace LearningOpenTK
             vbo = new();
             ebo = new();
 
-            texture = new("Assets/pfp.png");
+            mainTexture = new("Assets/trees.png");
+            secondaryTexture = new("Assets/pfp.png");
+
             shader = new("Assets/shader.vert", "Assets/shader.frag");
 
             shader.Use();
 
-            texture.Use(TextureUnit.Texture0);
+            shader.SetInt("texture0", 0);
+            shader.SetInt("texture1", 1);
+
+            mainTexture.Use(TextureUnit.Texture0);
+            secondaryTexture.Use(TextureUnit.Texture1);
 
             vbo.SetData(vertices, BufferUsageHint.StaticDraw);
 
@@ -83,7 +89,7 @@ namespace LearningOpenTK
             // Next, we also setup texture coordinates. It works in much the same way.
             // We add an offset of 3, since the texture coordinates comes after the position data.
             // We also change the amount of data to 2 because there's only 2 floats for texture coordinates.
-            int texCoordLocation = shader.GetAttributeLocation("aTexCoord");
+            int texCoordLocation = shader.GetAttributeLocation("aUVCoord");
             vao.EnableVertexAttribute(texCoordLocation);
             vao.VertexAttributePointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
             
@@ -110,7 +116,7 @@ namespace LearningOpenTK
             vbo.Dispose();
             shader.Dispose();
 
-            texture.Dispose();
+            mainTexture.Dispose();
         }
     }
 }

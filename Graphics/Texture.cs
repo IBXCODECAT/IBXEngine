@@ -31,7 +31,7 @@ namespace LearningOpenTK.Graphics
         /// <summary>
         /// Binds the texture to the current context
         /// </summary>
-        public void Bind()
+        private void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
 

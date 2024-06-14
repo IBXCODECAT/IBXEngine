@@ -1,22 +1,17 @@
 ﻿#version 330 core
 
-layout(location = 0) in vec3 aPosition;
+in vec3 aPosition; // Vertex positions are input to the vertex shader...
+in vec2 aUVCoord; // Texture coordinates are input to the vertex shader...
 
-// We add another input variable for the texture coordinates.
-
-layout(location = 1) in vec2 aTexCoord;
-
-// ...However, they aren't needed for the vertex shader itself.
-// Instead, we create an output variable so we can send that data to the fragment shader.
-
-out vec2 texCoord;
+out vec2 uvCoord; // UV Coordinates are output from the vertex shader to the fragment shader...
 
 void main(void)
 {
     // Then, we further the input texture coordinate to the output one.
     // texCoord can now be used in the fragment shader.
     
-    texCoord = aTexCoord;
+    // We don't need to do anything with the UVs, so we just pass them through to the fragment shader.
+    uvCoord = aUVCoord;
 
     gl_Position = vec4(aPosition, 1.0);
 }

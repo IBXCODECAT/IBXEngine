@@ -107,6 +107,13 @@ namespace LearningOpenTK.Graphics
             GL.UseProgram(Handle);
         }
 
+        public void SetInt(string name, int value)
+        {
+            int location = GL.GetUniformLocation(Handle, name);
+
+            GL.Uniform1(location, value);
+        }
+
         /// <summary>
         /// Called when the object is being disposed of
         /// </summary>

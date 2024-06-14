@@ -13,7 +13,7 @@ namespace LearningOpenTK.Graphics
             Handle = GL.GenVertexArray();
         }
 
-        public void Bind()
+        private void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
             GL.BindVertexArray(Handle);
