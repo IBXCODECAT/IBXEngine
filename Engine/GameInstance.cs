@@ -1,14 +1,14 @@
-﻿using LearningOpenTK.Buffers;
-using LearningOpenTK.Graphics;
+﻿using IBXEngine.Buffers;
+using IBXEngine.Graphics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 
-namespace LearningOpenTK
+namespace IBXEngine
 {
-    internal class GameInstance(int width, int height, string title) : GameWindow(new GameWindowSettings(), new NativeWindowSettings()
+    public class GameInstance(int width, int height, string title) : GameWindow(new GameWindowSettings(), new NativeWindowSettings()
     {
         ClientSize = new Vector2i(width, height),
         Title = title,

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace LearningOpenTK.Graphics
+namespace IBXEngine.Graphics
 {
     internal class ShaderProgram : IDisposable
     {

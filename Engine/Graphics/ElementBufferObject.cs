@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace LearningOpenTK.Graphics
+namespace IBXEngine.Graphics
 {
     internal class ElementBufferObject : IDisposable
     {

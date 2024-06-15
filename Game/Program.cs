@@ -1,4 +1,6 @@
-﻿namespace LearningOpenTK
+﻿using IBXEngine;
+
+namespace IBX_Game
 {
     internal class Program
     {

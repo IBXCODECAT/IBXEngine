@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LearningOpenTK.Graphics
+namespace IBXEngine.Graphics
 {
     internal class Texture : IDisposable
     {
