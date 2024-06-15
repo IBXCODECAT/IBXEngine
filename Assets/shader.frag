@@ -1,41 +1,52 @@
-﻿#version 330
+﻿#version 330 core
 
 out vec4 outputColor;
 
-in vec2 uvCoord; // UV coordinates from the vertex shader.
-in vec3 Normals; // Normals from the vertex shader.
-in vec3 FragPos; // Fragment position from the vertex shader.
+in vec2 uvCoord;       // UV coordinates from the vertex shader
+in vec3 Normals;       // Normals from the vertex shader
+in vec3 FragPos;       // Fragment position from the vertex shader
 
-// A sampler2d is the representation of a texture in a shader.
-// Each sampler is bound to a texture unit (texture units are described in Texture.cs on the Use function).
-// By default, the unit is 0, so no code-related setup is actually needed.
-// Multiple samplers will be demonstrated in section 1.5.
-
+// Samplers for the textures
 uniform sampler2D texture0;
 uniform sampler2D texture1;
 
+// Lighting uniforms
 uniform vec3 lightPos;
 uniform vec3 lightColor;
+uniform vec3 viewPos; // Camera position for specular highlights
 
 void main()
 {
+    // Ambient light color
     vec3 ambientLightColor = vec3(0.1, 0.1, 0.1);
 
+    // Normalize the input normals
     vec3 norm = normalize(Normals);
+
+    // Calculate the direction of the light
     vec3 lightDir = normalize(lightPos - FragPos);  
 
+    // Calculate the diffuse component
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuseColor = diff * lightColor;
 
-    vec4 textureColor = mix(texture(texture0, uvCoord), texture(texture1, uvCoord), 0.5);
+    // Calculate the specular component
+    float shininess = 32.0;
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
+    vec3 specularColor = spec * lightColor;
 
-    vec4 diffuse = vec4(diffuseColor, 1.0);
+    // Sample the textures and mix them
+    vec4 textureColor0 = texture(texture0, uvCoord);
+    vec4 textureColor1 = texture(texture1, uvCoord);
+    vec4 textureColor = mix(textureColor0, textureColor1, 0.5);
+
+    // Combine the lighting components
     vec4 ambient = vec4(ambientLightColor, 1.0);
+    vec4 diffuse = vec4(diffuseColor, 1.0);
+    vec4 specular = vec4(specularColor, 1.0);
 
-    // Apply ambient lighting
-    outputColor = textureColor * (ambient + diffuse);
-
-    // To use a texture, you call the texture() function.
-    // It takes two parameters: the sampler to use, and a vec2, used as texture coordinates.
-    // outputColor = texture(texture0, uvCoord);
+    // Final output color
+    outputColor = textureColor * (ambient + diffuse + specular);
 }
