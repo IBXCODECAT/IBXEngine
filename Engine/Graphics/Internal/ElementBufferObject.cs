@@ -1,18 +1,14 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using System.Runtime.CompilerServices;
 
-namespace IBXEngine.Buffers
+namespace IBX_Engine.Graphics.Internal
 {
-    internal class VertexBufferObject : IDisposable
+    internal class ElementBufferObject : IDisposable
     {
-        /// <summary>
-        /// The handle of the vertex buffer object
-        /// </summary>
         public int Handle { get; private set; }
 
         private bool disposedValue = false;
 
-        public VertexBufferObject()
+        public ElementBufferObject()
         {
             Handle = GL.GenBuffer();
         }
@@ -23,26 +19,25 @@ namespace IBXEngine.Buffers
         private void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, Handle);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, Handle);
+        }
+
+        /// <summary>
+        /// Sets the data for this buffer object
+        /// </summary>
+        /// <param name="data">The data to set</param>
+        /// <param name="hint">Usage hint</param>
+        public void BufferData(uint[] data, BufferUsageHint hint)
+        {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
+            Bind();
+            GL.BufferData(BufferTarget.ElementArrayBuffer, data.Length * sizeof(uint), data, hint);
         }
 
         /// <summary>
         /// Unbinds the current buffer object no matter what it currently is
         /// </summary>
-        public static void UnbindCurrent() => GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-        /// <summary>
-        /// Sets the data for this buffer object
-        /// </summary>
-        /// <typeparam name="T">The data type</typeparam>
-        /// <param name="data">The data to pass in</param>
-        /// <param name="hint">Usage hint</param>
-        public void SetData<T>(T[] data, BufferUsageHint hint) where T : struct
-        {
-            ObjectDisposedException.ThrowIf(disposedValue, this);
-            Bind();
-            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * Unsafe.SizeOf<T>(), data, hint);
-        }
+        public static void UnbindCurrent() => GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
 
         /// <summary>
         /// Called when the object is being disposed of
@@ -52,7 +47,7 @@ namespace IBXEngine.Buffers
             if (!disposedValue)
             {
                 UnbindCurrent();
-                GL.DeleteBuffer(Handle);
+                GL.DeleteVertexArray(Handle);
                 disposedValue = true;
             }
         }
@@ -60,9 +55,9 @@ namespace IBXEngine.Buffers
         /// <summary>
         /// Finalizer to ensure the object is properly disposed of
         /// </summary>
-        ~VertexBufferObject()
+        ~ElementBufferObject()
         {
-            if (!disposedValue) Console.WriteLine($"[{GetType().Name}] Warning: Resource not disposed properly. Call Dispose() to properly dispose of the resource.");
+            if (!disposedValue) Console.WriteLine($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
         }
 
         /// <summary>

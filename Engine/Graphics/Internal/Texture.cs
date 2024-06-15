@@ -1,13 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IBXEngine.Graphics
+namespace IBX_Engine.Graphics.Internal
 {
     internal class Texture : IDisposable
     {
@@ -107,7 +101,7 @@ namespace IBXEngine.Graphics
         /// </summary>
         ~Texture()
         {
-            if(!disposedValue)
+            if (!disposedValue)
             {
                 Console.WriteLine($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
             }

@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
-namespace IBXEngine.Graphics
+namespace IBX_Engine.Graphics.Internal
 {
     internal class ShaderProgram : IDisposable
     {
@@ -158,7 +158,7 @@ namespace IBXEngine.Graphics
         /// </summary>
         ~ShaderProgram()
         {
-            if(!disposedValue)
+            if (!disposedValue)
             {
                 Console.WriteLine($"[{GetType().Name}] Warning: Resource not disposed properly. Call Dispose() to properly dispose of the resource.");
             }

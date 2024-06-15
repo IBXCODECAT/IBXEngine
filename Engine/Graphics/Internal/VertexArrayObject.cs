@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 
-namespace IBXEngine.Graphics
+namespace IBX_Engine.Graphics.Internal
 {
     internal class VertexArrayObject : IDisposable
     {

@@ -1,10 +1,9 @@
-﻿using IBXEngine.Buffers;
-using IBXEngine.Graphics;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
+using IBX_Engine.Graphics.Internal;
 
 namespace IBXEngine
 {
@@ -108,14 +107,14 @@ namespace IBXEngine
              1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
             -1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
             // Back face
-            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
              1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
             -1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
             // Left face
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
             -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
             -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
             // Right face
              1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
@@ -123,9 +122,9 @@ namespace IBXEngine
              1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
              1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
             // Top face
-            -1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-             1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
              1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+             1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
             -1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
             // Bottom face
             -1.0f, -1.0f, -1.0f, 0.0f,  -1.0f,  0.0f, 0.0f, 0.0f,
@@ -170,6 +169,9 @@ namespace IBXEngine
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
 
             GL.Enable(EnableCap.DepthTest);
 
@@ -237,7 +239,7 @@ namespace IBXEngine
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            shader.SetVector3("lightPos", new Vector3(-2.2f, 2.0f, -2.0f));
+            shader.SetVector3("lightPos", new Vector3(0.2f, 1.0f, 0.7f));
             shader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
 
 
