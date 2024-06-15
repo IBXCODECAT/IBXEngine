@@ -102,36 +102,36 @@ namespace LearningOpenTK
 
         private readonly float[] vertices =
         [
-            // Front face
-            -1.0f, -1.0f,  1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f,  1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
+            // Position          // Normal        // Texture coordinates
+            -1.0f, -1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
             // Back face
-            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f, -1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, -1.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
             // Left face
-            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
-            -1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-            -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
             // Right face
-             1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-             1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+             1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
+             1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
             // Top face
-            -1.0f,  1.0f, -1.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, -1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f,  1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f,  1.0f, 0.0f, 1.0f,
+            -1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+             1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
+             1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
             // Bottom face
-            -1.0f, -1.0f, -1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, -1.0f, 1.0f, 0.0f,
-             1.0f, -1.0f,  1.0f, 1.0f, 1.0f,
-            -1.0f, -1.0f,  1.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, -1.0f, 0.0f,  -1.0f,  0.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, -1.0f, 0.0f,  -1.0f,  0.0f, 1.0f, 0.0f,
+             1.0f, -1.0f,  1.0f, 0.0f,  -1.0f,  0.0f, 1.0f, 1.0f,
+            -1.0f, -1.0f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f, 1.0f,
         ];
 
         private readonly uint[] indices = 
@@ -199,20 +199,26 @@ namespace LearningOpenTK
             // This will now pass the new vertex array to the buffer.
             int vertexLocation = shader.GetAttributeLocation("aPosition");
             vao.EnableVertexAttribute(vertexLocation);
-            vao.VertexAttributePointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float));
+            vao.VertexAttributePointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float));
 
+            int normalLocation = shader.GetAttributeLocation("aNormal");
+            vao.EnableVertexAttribute(normalLocation);
+            vao.VertexAttributePointer(normalLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 3 * sizeof(float));
+            
             // Next, we also setup texture coordinates. It works in much the same way.
             // We add an offset of 3, since the texture coordinates comes after the position data.
             // We also change the amount of data to 2 because there's only 2 floats for texture coordinates.
             int texCoordLocation = shader.GetAttributeLocation("aUVCoord");
             vao.EnableVertexAttribute(texCoordLocation);
-            vao.VertexAttributePointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            vao.VertexAttributePointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 8 * sizeof(float), 6 * sizeof(float));
             
             ebo.BufferData(indices, BufferUsageHint.StaticDraw);
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
             camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+
+            camera.Position = new Vector3(-1.5f, 0.5f, 2.0f);
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
@@ -225,16 +231,14 @@ namespace LearningOpenTK
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            Matrix4 model = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-
-            // Note that we're translating the scene in the reverse direction of where we want to move.
-            Matrix4 view = Matrix4.CreateTranslation(0.0f, MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds), -3.0f);
-
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), width / height, 0.1f, 100.0f);
+            Matrix4 model = Matrix4.Identity;
 
             shader.SetMatrix4("model", model);
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+            shader.SetVector3("lightPos", new Vector3(-2.2f, 2.0f, -2.0f));
+            shader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
 
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);

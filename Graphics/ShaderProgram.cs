@@ -123,6 +123,13 @@ namespace LearningOpenTK.Graphics
             GL.UniformMatrix4(location, true, ref matrix);
         }
 
+        public void SetVector3(string name, Vector3 vector)
+        {
+            ObjectDisposedException.ThrowIf(disposedValue, this);
+            int location = GL.GetUniformLocation(Handle, name);
+            GL.Uniform3(location, vector);
+        }
+
         /// <summary>
         /// Gets the location of a uniform in the shader program
         /// </summary>
