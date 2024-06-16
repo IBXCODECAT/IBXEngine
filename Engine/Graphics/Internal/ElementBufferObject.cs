@@ -57,11 +57,10 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         ~ElementBufferObject()
         {
-            if (!disposedValue) Console.WriteLine($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
+            if (!disposedValue) Logger.LogWarning($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
         }
 
         /// <summary>
-        /// Disposes of the object
         /// </summary>
         public void Dispose()
         {

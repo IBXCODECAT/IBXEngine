@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using IBX_Engine.Exceptions;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace IBX_Engine.Graphics.Internal
@@ -33,12 +34,9 @@ namespace IBX_Engine.Graphics.Internal
             GL.GetShader(VertexShader, ShaderParameter.CompileStatus, out int vertexCompileStatus);
 
             // If the vertex shader failed to compile, throw an exception
-            if (vertexCompileStatus == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(VertexShader);
-                Console.WriteLine($"Error occurred whilst compiling Vertex Shader({vertexPath}): {infoLog}");
-                throw new Exception($"Error occurred whilst compiling Vertex Shader({vertexPath}): {infoLog}");
-            }
+            string vertexShaderInfoLog = GL.GetShaderInfoLog(VertexShader);
+            ShaderCompilationException vertexCompileException = new($"Error occurred whilst compiling Vertex Shader @ {vertexPath}:\n{vertexShaderInfoLog}", vertexPath, vertexShaderInfoLog);
+            EngineExceptionManager.FailCatastrophically(vertexCompileException, vertexCompileStatus == 0);
 
             // Read the shader source from the fragment shader file
             string FragmentShaderSource = File.ReadAllText(fragmentPath);
@@ -54,11 +52,9 @@ namespace IBX_Engine.Graphics.Internal
             GL.GetShader(FragmentShader, ShaderParameter.CompileStatus, out int fragmentCompileStatus);
 
             // If the fragment shader failed to compile, throw an exception
-            if (fragmentCompileStatus == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(FragmentShader);
-                throw new Exception($"Error occurred whilst compiling Fragment Shader({fragmentPath}): {infoLog}");
-            }
+            string fragmentShaderInfoLog = GL.GetShaderInfoLog(FragmentShader);
+            ShaderCompilationException fragmentCompileException = new($"Error occurred whilst compiling Fragment Shader @ {fragmentPath}:\n{fragmentShaderInfoLog}", fragmentPath, fragmentShaderInfoLog);
+            EngineExceptionManager.FailCatastrophically(fragmentCompileException, fragmentCompileStatus == 0);
 
             // Create the shader program
             Handle = GL.CreateProgram();
@@ -74,11 +70,9 @@ namespace IBX_Engine.Graphics.Internal
             GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int programLinkStatus);
 
             // If the program failed to link, throw an exception
-            if (programLinkStatus == 0)
-            {
-                string infoLog = GL.GetProgramInfoLog(Handle);
-                throw new Exception($"Error occurred whilst linking Program({Handle}): {infoLog}");
-            }
+            string shaderProgramLinkInfoLog = GL.GetProgramInfoLog(Handle);
+            ShaderCompilationException programLinkException = new($"Error occurred whilst linking Program({Handle}):\n{shaderProgramLinkInfoLog}", null, shaderProgramLinkInfoLog);
+            EngineExceptionManager.FailCatastrophically(programLinkException, programLinkStatus == 0);
 
             // Detach the shaders from the program and delete them because they are no longer needed
             GL.DetachShader(Handle, VertexShader);

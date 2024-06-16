@@ -5,7 +5,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using IBX_Engine.Graphics.Internal;
 
-namespace IBXEngine
+namespace IBX_Engine
 {
     public class GameInstance(int width, int height, string title) : GameWindow(new GameWindowSettings(), new NativeWindowSettings()
     {
