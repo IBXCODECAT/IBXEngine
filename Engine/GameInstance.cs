@@ -32,7 +32,7 @@ namespace IBX_Engine
         {
             base.OnMouseWheel(e);
 
-            camera.Fov -= e.OffsetY;
+            camera.FOV -= e.OffsetY;
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
@@ -79,7 +79,7 @@ namespace IBX_Engine
             }
 
             // Get the mouse state
-            var mouse = MouseState;
+            MouseState mouse = MouseState;
 
             if (camera.FirstMove) // This bool variable is initially set to true.
             {
@@ -175,7 +175,7 @@ namespace IBX_Engine
 
             GL.Enable(EnableCap.DepthTest);
 
-            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            GL.ClearColor(0.3f, 0f, 0.3f, 1.0f);
 
             vao = new();
             vbo = new();
@@ -218,9 +218,10 @@ namespace IBX_Engine
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
-            camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
-
-            camera.Position = new Vector3(-1.5f, 0.5f, 2.0f);
+            camera = new(Vector3.UnitZ * 3, Size.X / (float)Size.Y)
+            {
+                Position = new Vector3(-1.5f, 0.5f, 2.0f)
+            };
 
             // We make the mouse cursor invisible and captured so we can have proper FPS-camera movement.
             CursorState = CursorState.Grabbed;
@@ -239,8 +240,11 @@ namespace IBX_Engine
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
+            float absoluteSin = MathF.Abs(MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds));
+            float absoluteCos = MathF.Abs(MathF.Cos((float)DateTime.Now.TimeOfDay.TotalSeconds));
+
             shader.SetVector3("lightPos", new Vector3(2f, 3 * MathF.Abs(MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds)), -1.5f));
-            shader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
+            shader.SetVector3("lightColor", new Vector3(absoluteSin, absoluteCos, absoluteCos));
 
             shader.SetVector3("viewPos", camera.Position);
 

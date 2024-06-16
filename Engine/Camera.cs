@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
 
 namespace IBX_Engine
 {
@@ -10,7 +9,7 @@ namespace IBX_Engine
 
     // TL;DR: This is just one of many ways in which we could have set up the camera.
     // Check out the web version if you don't know why we are doing a specific thing or want to know more about the code.
-    internal class Camera
+    internal class Camera(Vector3 position, float aspectRatio)
     {
         internal bool FirstMove { get; set; } = true;
         internal Vector2 LastPosition { get; set; } = Vector2.Zero;
@@ -31,17 +30,11 @@ namespace IBX_Engine
         // The field of view of the camera (radians)
         private float _fov = MathHelper.PiOver2;
 
-        public Camera(Vector3 position, float aspectRatio)
-        {
-            Position = position;
-            AspectRatio = aspectRatio;
-        }
-
         // The position of the camera
-        public Vector3 Position { get; set; }
+        public Vector3 Position { get; set; } = position;
 
         // This is simply the aspect ratio of the viewport, used for the projection matrix.
-        public float AspectRatio { private get; set; }
+        public float AspectRatio { private get; set; } = aspectRatio;
 
         public Vector3 Front => _front;
 
@@ -79,12 +72,12 @@ namespace IBX_Engine
         // This has been discussed more in depth in a previous tutorial,
         // but in this tutorial, you have also learned how we can use this to simulate a zoom feature.
         // We convert from degrees to radians as soon as the property is set to improve performance.
-        public float Fov
+        public float FOV
         {
             get => MathHelper.RadiansToDegrees(_fov);
             set
             {
-                var angle = MathHelper.Clamp(value, 1f, 90f);
+                float angle = MathHelper.Clamp(value, 1f, 90f);
                 _fov = MathHelper.DegreesToRadians(angle);
             }
         }
