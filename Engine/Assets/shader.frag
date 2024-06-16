@@ -3,7 +3,7 @@
 out vec4 outputColor;
 
 in vec2 uvCoord;       // UV coordinates from the vertex shader
-in vec3 Normals;       // Normals from the vertex shader
+in vec3 Normal;       // Normals from the vertex shader
 in vec3 FragPos;       // Fragment position from the vertex shader
 
 // Samplers for the textures
@@ -21,7 +21,7 @@ void main()
     vec3 ambientLightColor = vec3(0.1, 0.1, 0.1);
 
     // Normalize the input normals
-    vec3 norm = normalize(Normals);
+    vec3 norm = normalize(Normal);
 
     // Calculate the direction of the light
     vec3 lightDir = normalize(lightPos - FragPos);  

@@ -102,15 +102,15 @@ namespace IBXEngine
         private readonly float[] vertices =
         [
             // Position          // Normal        // Texture coordinates
-            -1.0f, -1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, 1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
+            -1.0f, -1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
             // Back face
-             1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 0.0f,
-            -1.0f,  1.0f, -1.0f, 0.0f,  0.0f,  1.0f, 0.0f, 1.0f,
+             1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
+             1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
+            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
+            -1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
             // Left face
             -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
             -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
@@ -206,7 +206,7 @@ namespace IBXEngine
             int normalLocation = shader.GetAttributeLocation("aNormal");
             vao.EnableVertexAttribute(normalLocation);
             vao.VertexAttributePointer(normalLocation, 3, VertexAttribPointerType.Float, false, 8 * sizeof(float), 3 * sizeof(float));
-            
+
             // Next, we also setup texture coordinates. It works in much the same way.
             // We add an offset of 3, since the texture coordinates comes after the position data.
             // We also change the amount of data to 2 because there's only 2 floats for texture coordinates.
@@ -239,8 +239,10 @@ namespace IBXEngine
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            shader.SetVector3("lightPos", new Vector3(0.2f, 1.0f, 0.7f));
+            shader.SetVector3("lightPos", new Vector3(2f, 3 * MathF.Abs(MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds)), -1.5f));
             shader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
+
+            shader.SetVector3("viewPos", camera.Position);
 
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
