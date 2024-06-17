@@ -18,6 +18,8 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         public static int MaxVertexAttributes { get { return GL.GetInteger(GetPName.MaxVertexAttribs); } }
 
+        internal static ShaderProgram CURRENT_BOUND_PROGRAM { get; private set; }
+
         public ShaderProgram(string vertexPath, string fragmentPath)
         {
             // Read the shader source from the vertex shader file
@@ -101,6 +103,8 @@ namespace IBX_Engine.Graphics.Internal
 
             // Use the shader program
             GL.UseProgram(Handle);
+
+            CURRENT_BOUND_PROGRAM = this;
         }
 
         public void SetInt(string name, int value)
