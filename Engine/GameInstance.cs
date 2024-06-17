@@ -4,6 +4,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using IBX_Engine.Graphics.Internal;
+using IBX_Engine.Mathematics;
 
 namespace IBX_Engine
 {
@@ -49,110 +50,190 @@ namespace IBX_Engine
                 Close();
             }
 
-            const float cameraSpeed = 1.5f;
-            const float sensitivity = 0.2f;
-
-            if (KeyboardState.IsKeyDown(Keys.W))
-            {
-                camera.Position += camera.Front * cameraSpeed * (float)args.Time; // Forward
-            }
-
-            if (KeyboardState.IsKeyDown(Keys.S))
-            {
-                camera.Position -= camera.Front * cameraSpeed * (float)args.Time; // Backwards
-            }
-            if (KeyboardState.IsKeyDown(Keys.A))
-            {
-                camera.Position -= camera.Right * cameraSpeed * (float)args.Time; // Left
-            }
-            if (KeyboardState.IsKeyDown(Keys.D))
-            {
-                camera.Position += camera.Right * cameraSpeed * (float)args.Time; // Right
-            }
-            if (KeyboardState.IsKeyDown(Keys.Space))
-            {
-                camera.Position += camera.Up * cameraSpeed * (float)args.Time; // Up
-            }
-            if (KeyboardState.IsKeyDown(Keys.LeftShift))
-            {
-                camera.Position -= camera.Up * cameraSpeed * (float)args.Time; // Down
-            }
-
-            // Get the mouse state
-            MouseState mouse = MouseState;
-
-            if (camera.FirstMove) // This bool variable is initially set to true.
-            {
-                camera.LastPosition = new Vector2(mouse.X, mouse.Y);
-                camera.FirstMove = false;
-            }
-            else
-            {
-                // Calculate the offset of the mouse position
-                var deltaX = mouse.X - camera.LastPosition.X;
-                var deltaY = mouse.Y - camera.LastPosition.Y;
-                camera.LastPosition = new Vector2(mouse.X, mouse.Y);
-
-                // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-                camera.Yaw += deltaX * sensitivity;
-                camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
-            }
+            camera.ProcessCameraInput(KeyboardState, MouseState, args);
         }
+
+        private const float CELL_THICKNESS = 0.5f;
+
+        private static Vec2[] GetHexVertex(float radius)
+        {
+            // Define the angle between each vertex of the hexagon
+            float angleIncrement = MathF.PI / 3.0f;
+
+            // Initialize array to store vertices
+            Vec2[] vertices = new Vec2[7];
+
+            vertices[0] = new Vec2(0f, 0f);
+
+            // Calculate each vertex
+            for (int i = 0; i < 6; i++)
+            {
+                float angle = i * angleIncrement;
+                float x = radius * MathF.Cos(angle);
+                float y = radius * MathF.Sin(angle);
+                vertices[i + 1] = new(x, y);
+            }
+
+            return vertices;
+        }
+
+        private static readonly Vec2[] hexPoints = GetHexVertex(1.0f);
 
         private readonly float[] vertices =
         [
-            // Position          // Normal        // Texture coordinates
-            -1.0f, -1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, 1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f,
-            // Back face
-             1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 1.0f,
-             1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 0.0f,
-            -1.0f,  1.0f, -1.0f, 0.0f,  0.0f, -1.0f, 0.0f, 1.0f,
-            // Left face
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-            // Right face
-             1.0f, -1.0f, -1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 0.0f,
-             1.0f,  1.0f, -1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 0.0f,
-             1.0f,  1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 1.0f, 1.0f,
-             1.0f, -1.0f,  1.0f, 1.0f,  0.0f,  0.0f, 0.0f, 1.0f,
-            // Top face
-             1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 1.0f,
-             1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f, 1.0f, 0.0f,
-            -1.0f,  1.0f, -1.0f, 0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
-            -1.0f,  1.0f,  1.0f, 0.0f,  1.0f,  0.0f, 0.0f, 1.0f,
-            // Bottom face
-            -1.0f, -1.0f, -1.0f, 0.0f,  -1.0f,  0.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, -1.0f, 0.0f,  -1.0f,  0.0f, 1.0f, 0.0f,
-             1.0f, -1.0f,  1.0f, 0.0f,  -1.0f,  0.0f, 1.0f, 1.0f,
-            -1.0f, -1.0f,  1.0f, 0.0f,  -1.0f,  0.0f, 0.0f, 1.0f,
+            // Positions                                        Normals             Texture coords
+            //====================BOTTOM HEXAGON FACES====================//
+
+            //Triangle 1
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[0].Y,    0f, -1.0f, 0f,      0f, 0f,
+            hexPoints[1].X, -CELL_THICKNESS, hexPoints[1].Y,    0f, -1.0f, 0f,      0f, 1f,
+            hexPoints[2].X, -CELL_THICKNESS, hexPoints[2].Y,    0f, -1.0f, 0f,      1f, 1f,
+
+            //Triangle 2
+            hexPoints[2].X, -CELL_THICKNESS, hexPoints[2].Y,    0f, -1.0f, 0f,      1f, 1f,
+            hexPoints[3].X, -CELL_THICKNESS, hexPoints[3].Y,    0f, -1.0f, 0f,      1f, 0f,
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[0].Y,    0f, -1.0f, 0f,      0f, 0f,
+
+            //Triangle 3
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[0].Y,    0f, -1.0f, 0f,      0f, 0f,
+            hexPoints[3].X, -CELL_THICKNESS, hexPoints[3].Y,    0f, -1.0f, 0f,      0f, 1f,
+            hexPoints[4].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, -1.0f, 0f,      1f, 1f,
+
+            //Triangle 4
+            hexPoints[4].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, -1.0f, 0f,      1f, 1f,
+            hexPoints[5].X, -CELL_THICKNESS, hexPoints[5].Y,    0f, -1.0f, 0f,      1f, 0f,
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[0].Y,    0f, -1.0f, 0f,      0f, 0f,
+
+            //Triagnle 5
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, -1.0f, 0f,      0f, 0f,
+            hexPoints[5].X, -CELL_THICKNESS, hexPoints[5].Y,    0f, -1.0f, 0f,      0f, 1f,
+            hexPoints[6].X, -CELL_THICKNESS, hexPoints[6].Y,    0f, -1.0f, 0f,      1f, 1f,
+
+            //Triangle 6
+            hexPoints[6].X, -CELL_THICKNESS, hexPoints[6].Y,    0f, -1.0f, 0f,      1f, 1f,
+            hexPoints[1].X, -CELL_THICKNESS, hexPoints[1].Y,    0f, -1.0f, 0f,      1f, 0f,
+            hexPoints[0].X, -CELL_THICKNESS, hexPoints[0].Y,    0f, -1.0f, 0f,      0f, 0f,
+
+            //====================TOP HEXAGON FACES====================//
+
+            //Triangle 1
+            hexPoints[2].X,  CELL_THICKNESS, hexPoints[2].Y,    0f,  1.0f, 0f,      0f, 0f,
+            hexPoints[1].X,  CELL_THICKNESS, hexPoints[1].Y,    0f,  1.0f, 0f,      0f, 1f,
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+
+            //Triangle 2
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+            hexPoints[3].X,  CELL_THICKNESS, hexPoints[3].Y,    0f,  1.0f, 0f,      1f, 0f,
+            hexPoints[2].X,  CELL_THICKNESS, hexPoints[2].Y,    0f,  1.0f, 0f,      0f, 0f,
+
+            //Triangle 3
+            hexPoints[4].X,  CELL_THICKNESS, hexPoints[4].Y,    0f,  1.0f, 0f,      0f, 0f,
+            hexPoints[3].X,  CELL_THICKNESS, hexPoints[3].Y,    0f,  1.0f, 0f,      0f, 1f,
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+
+            //Triangle 4
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+            hexPoints[5].X,  CELL_THICKNESS, hexPoints[5].Y,    0f,  1.0f, 0f,      1f, 0f,
+            hexPoints[4].X,  CELL_THICKNESS, hexPoints[4].Y,    0f,  1.0f, 0f,      0f, 0f,
+
+            //Triangle 5
+            hexPoints[6].X,  CELL_THICKNESS, hexPoints[6].Y,    0f,  1.0f, 0f,      0f, 0f,
+            hexPoints[5].X,  CELL_THICKNESS, hexPoints[5].Y,    0f,  1.0f, 0f,      0f, 1f,
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+
+            //Triangle 6
+            hexPoints[0].X,  CELL_THICKNESS, hexPoints[0].Y,    0f,  1.0f, 0f,      1f, 1f,
+            hexPoints[1].X,  CELL_THICKNESS, hexPoints[1].Y,    0f,  1.0f, 0f,      1f, 0f,
+            hexPoints[6].X,  CELL_THICKNESS, hexPoints[6].Y,    0f,  1.0f, 0f,      0f, 0f,
+
+            //====================SIDE QUAD FACES====================//
+
+            //SIDE 1 - Triangle 1
+            hexPoints[1].X, -CELL_THICKNESS, hexPoints[1].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[1].X,  CELL_THICKNESS, hexPoints[1].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[2].X, -CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 1 - Triangle 2
+            hexPoints[1].X, CELL_THICKNESS, hexPoints[1].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[2].X, CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[2].X, -CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 2 - Triangle 1
+            hexPoints[2].X, -CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[2].X,  CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[3].X, -CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //Side 2 - Triangle 2
+            hexPoints[2].X, CELL_THICKNESS, hexPoints[2].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[3].X, CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[3].X, -CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 3 - Triangle 1
+            hexPoints[3].X, -CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[3].X,  CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[4].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //Side 3 - Triangle 2
+            hexPoints[3].X, CELL_THICKNESS, hexPoints[3].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[4].X, CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[4].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 4 - Triangle 1
+            hexPoints[4].X, -CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[4].X,  CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[5].X, -CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //Side 4 - Triangle 2
+            hexPoints[4].X, CELL_THICKNESS, hexPoints[4].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[5].X, CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[5].X, -CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 5 - Triangle 1
+            hexPoints[5].X, -CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[5].X,  CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[6].X, -CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //Side 5 - Triangle 2
+            hexPoints[5].X, CELL_THICKNESS, hexPoints[5].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[6].X, CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[6].X, -CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //SIDE 6 - Triangle 1
+            hexPoints[6].X, -CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,         0f, 0f,
+            hexPoints[6].X,  CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,         0f, 1f,
+            hexPoints[1].X, -CELL_THICKNESS, hexPoints[1].Y,    0f, 0f, 0f,         1f, 0f,
+
+            //Side 6 - Triangle 2
+            hexPoints[6].X, CELL_THICKNESS, hexPoints[6].Y,    0f, 0f, 0f,          0f, 1f,
+            hexPoints[1].X, CELL_THICKNESS, hexPoints[1].Y,    0f, 0f, 0f,          1f, 1f,
+            hexPoints[1].X, -CELL_THICKNESS, hexPoints[1].Y,   0f, 0f, 0f,         1f, 0f,
         ];
 
         private readonly uint[] indices = 
         [
-            // Front face
-            0, 1, 2,
-            2, 3, 0,
-            // Back face
-            4, 5, 6,
-            6, 7, 4,
-            // Left face
-            8, 9, 10,
-            10, 11, 8,
-            // Right face
-            12, 13, 14,
-            14, 15, 12,
-            // Top face
-            16, 17, 18,
-            18, 19, 16,
-            // Bottom face
-            20, 21, 22,
-            22, 23, 20,
+            // ====================BOTTOM HEXAGON FACES====================//
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+
+            // ====================TOP HEXAGON FACES====================//
+            19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+
+            // Side 0
+            36, 37, 38, 39, 40, 41,
+
+            // Side 1
+            42, 43, 44, 45, 46, 47,
+
+            // Side 2
+            48, 49, 50, 51, 52, 53,
+
+            // Side 3
+            54, 55, 56, 57, 58, 59,
+
+            // Side 4
+            60, 61, 62, 63, 64, 65,
+
+            // Side 5
+            66, 67, 68, 69, 70, 71,
         ];
 
         private VertexBufferObject vbo;
@@ -234,17 +315,18 @@ namespace IBX_Engine
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            Matrix4 model = Matrix4.Identity;
+            float Sin = (MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds));
+            //float absoluteCos = MathF.Abs(MathF.Cos((float)DateTime.Now.TimeOfDay.TotalSeconds));
+
+            Matrix4 model = Matrix4.CreateRotationZ(Sin);
 
             shader.SetMatrix4("model", model);
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            float absoluteSin = MathF.Abs(MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds));
-            float absoluteCos = MathF.Abs(MathF.Cos((float)DateTime.Now.TimeOfDay.TotalSeconds));
 
-            shader.SetVector3("lightPos", new Vector3(2f, 3 * MathF.Abs(MathF.Sin((float)DateTime.Now.TimeOfDay.TotalSeconds)), -1.5f));
-            shader.SetVector3("lightColor", new Vector3(absoluteSin, absoluteCos, absoluteCos));
+            shader.SetVector3("lightPos", new Vector3(2f, 3f, -1.5f));
+            shader.SetVector3("lightColor", new Vector3(1f, 1f, 1f));
 
             shader.SetVector3("viewPos", camera.Position);
 

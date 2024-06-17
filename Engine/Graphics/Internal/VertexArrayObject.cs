@@ -51,7 +51,7 @@ namespace IBX_Engine.Graphics.Internal
         /// <summary>
         /// Called when the object is being disposed of
         /// </summary>
-        protected virtual void Dispose(bool disposing)
+        protected virtual void DisposeProcedure()
         {
             if (!disposedValue)
             {
@@ -66,7 +66,7 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         ~VertexArrayObject()
         {
-            if (!disposedValue) Console.WriteLine($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
+            if (!disposedValue) Logger.LogWarning($"Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            DisposeProcedure();
             GC.SuppressFinalize(this);
         }
     }

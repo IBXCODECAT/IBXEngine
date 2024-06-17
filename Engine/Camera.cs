@@ -1,4 +1,6 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace IBX_Engine
 {
@@ -110,6 +112,55 @@ namespace IBX_Engine
             // not be what you need for all cameras so keep this in mind if you do not want a FPS camera.
             _right = Vector3.Normalize(Vector3.Cross(_front, Vector3.UnitY));
             _up = Vector3.Normalize(Vector3.Cross(_right, _front));
+        }
+
+        internal void ProcessCameraInput(KeyboardState keyboard, MouseState mouse, FrameEventArgs args)
+        {
+            const float cameraSpeed = 1.5f;
+            const float sensitivity = 0.2f;
+
+            if (keyboard.IsKeyDown(Keys.W))
+            {
+                Position += Front * cameraSpeed * (float)args.Time; // Forward
+            }
+
+            if (keyboard.IsKeyDown(Keys.S))
+            {
+                Position -= Front * cameraSpeed * (float)args.Time; // Backwards
+            }
+            if (keyboard.IsKeyDown(Keys.A))
+            {
+                Position -= Right * cameraSpeed * (float)args.Time; // Left
+            }
+            if (keyboard.IsKeyDown(Keys.D))
+            {
+                Position += Right * cameraSpeed * (float)args.Time; // Right
+            }
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                Position += Up * cameraSpeed * (float)args.Time; // Up
+            }
+            if (keyboard.IsKeyDown(Keys.LeftShift))
+            {
+                Position -= Up * cameraSpeed * (float)args.Time; // Down
+            }
+
+            if (FirstMove) // This bool variable is initially set to true.
+            {
+                LastPosition = new Vector2(mouse.X, mouse.Y);
+                FirstMove = false;
+            }
+            else
+            {
+                // Calculate the offset of the mouse position
+                var deltaX = mouse.X - LastPosition.X;
+                var deltaY = mouse.Y - LastPosition.Y;
+                LastPosition = new Vector2(mouse.X, mouse.Y);
+
+                // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
+                Yaw += deltaX * sensitivity;
+                Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
+            }
         }
     }
 }

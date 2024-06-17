@@ -9,7 +9,7 @@ namespace IBX_Engine.Graphics.Internal
 
         private bool disposedValue = false;
 
-        private string TexturePath;
+        private readonly string TexturePath;
 
         public Texture(string path)
         {
@@ -87,7 +87,7 @@ namespace IBX_Engine.Graphics.Internal
         /// <summary>
         /// Called when the object is being disposed of
         /// </summary>
-        public void Dispose(bool disposing)
+        public void DisposeProcedure()
         {
             if (!disposedValue)
             {
@@ -103,7 +103,7 @@ namespace IBX_Engine.Graphics.Internal
         {
             if (!disposedValue)
             {
-                Console.WriteLine($"[{GetType().Name}] Warning: Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
+                Logger.LogWarning($"Object was not disposed of properly. Call Dispose() to properly dispose of the resource.");
             }
         }
 
@@ -112,7 +112,7 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            DisposeProcedure();
             GC.SuppressFinalize(this);
         }
     }

@@ -138,7 +138,7 @@ namespace IBX_Engine.Graphics.Internal
         /// <summary>
         /// Called when the object is being disposed of
         /// </summary>
-        protected virtual void Dispose(bool disposing)
+        protected virtual void DisposeProcedure()
         {
             if (!disposedValue)
             {
@@ -154,7 +154,7 @@ namespace IBX_Engine.Graphics.Internal
         {
             if (!disposedValue)
             {
-                Console.WriteLine($"[{GetType().Name}] Warning: Resource not disposed properly. Call Dispose() to properly dispose of the resource.");
+                Logger.LogWarning($"Resource not disposed properly. Call Dispose() to properly dispose of the resource.");
             }
         }
 
@@ -163,7 +163,7 @@ namespace IBX_Engine.Graphics.Internal
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            DisposeProcedure();
             GC.SuppressFinalize(this);
         }
     }
