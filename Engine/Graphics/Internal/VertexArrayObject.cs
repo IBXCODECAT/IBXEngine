@@ -13,7 +13,7 @@ namespace IBX_Engine.Graphics.Internal
             Handle = GL.GenVertexArray();
         }
 
-        private void Bind()
+        internal void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
             GL.BindVertexArray(Handle);

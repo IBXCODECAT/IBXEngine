@@ -5,6 +5,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using IBX_Engine.Graphics.Internal;
 using IBX_Engine.VoxelSystem;
+using IBX_Engine.Mathematics;
 
 namespace IBX_Engine
 {
@@ -54,7 +55,7 @@ namespace IBX_Engine
 
         private Camera camera;
 
-        private Voxel voxel;
+        private readonly List<Voxel> VoxelsToRender = [];
 
         protected override void OnLoad()
         {
@@ -72,7 +73,9 @@ namespace IBX_Engine
 
             VoxelFaceFlags all = VoxelFaceFlags.TOP ^ VoxelFaceFlags.BOTTOM ^ VoxelFaceFlags.SIDE0 ^ VoxelFaceFlags.SIDE2 ^ VoxelFaceFlags.SIDE4;
 
-            voxel = new Voxel(all, VoxelPropretiesFLags.NONE);
+            VoxelsToRender.Add(new Voxel(Vec3.Zero, all, VoxelPropretiesFLags.NONE));
+            VoxelsToRender.Add(new Voxel(new Vec3(2, 0, 0), all, VoxelPropretiesFLags.NONE));
+            VoxelsToRender.Add(new Voxel(new Vec3(0, 0, 2), all, VoxelPropretiesFLags.NONE));
 
             Logger.Log($"Voxel Byte {(byte)all}");
 
@@ -100,7 +103,10 @@ namespace IBX_Engine
             shader.SetVector3("lightColor", new Vector3(1f, 1f, 1f));
             shader.SetVector3("viewPos", camera.Position);
 
-            voxel.VoxelMesh.Draw();
+            foreach(Voxel voxel in VoxelsToRender)
+            {
+                voxel.RenderVoxel();
+            }
 
             SwapBuffers();
         }

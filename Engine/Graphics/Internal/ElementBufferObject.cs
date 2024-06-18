@@ -16,7 +16,7 @@ namespace IBX_Engine.Graphics.Internal
         /// <summary>
         /// Binds the buffer object to the current context
         /// </summary>
-        private void Bind()
+        internal void Bind()
         {
             ObjectDisposedException.ThrowIf(disposedValue, this);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, Handle);
