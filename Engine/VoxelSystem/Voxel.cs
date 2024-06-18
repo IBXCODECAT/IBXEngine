@@ -1,10 +1,8 @@
 ﻿using IBX_Engine.Graphics;
-using IBX_Engine.Graphics.Internal;
 using IBX_Engine.Mathematics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using static IBX_Engine.Mathematics.HexMath;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace IBX_Engine.VoxelSystem
 {
@@ -67,7 +65,7 @@ namespace IBX_Engine.VoxelSystem
         /// </summary>
         public VoxelPropretiesFLags PropBitFlags { get; private set; }
 
-        private readonly float[] VoxelVertices =
+        private static readonly float[] VoxelVertices =
         [
             // Positions                                        Normals             Texture coords
             //====================BOTTOM HEXAGON FACES====================//
@@ -198,17 +196,17 @@ namespace IBX_Engine.VoxelSystem
         ];
         
         // ====================BOTTOM HEXAGON FACES====================//
-        private readonly uint[] BottomFaceIndices = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 ];
+        private static readonly uint[] BottomFaceIndices = [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ];
 
         // =====================TOP HEXAGON FACES=====================//
-        private readonly uint[] TopFaceIndices = [19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ];
+        private static readonly uint[] TopFaceIndices = [ 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ];
 
         // =====================SIDE HEXAGON FACES====================//
-        private readonly uint[] Side0Indices = [36, 37, 38, 39, 40, 41];
-        private readonly uint[] Side1Indices = [42, 43, 44, 45, 46, 47];
-        private readonly uint[] Side2Indices = [48, 49, 50, 51, 52, 53];
-        private readonly uint[] Side3Indices = [54, 55, 56, 57, 58, 59];
-        private readonly uint[] Side4Indices = [60, 61, 62, 63, 64, 65];
+        private static readonly uint[] Side0Indices = [36, 37, 38, 39, 40, 41];
+        private static readonly uint[] Side1Indices = [42, 43, 44, 45, 46, 47];
+        private static readonly uint[] Side2Indices = [48, 49, 50, 51, 52, 53];
+        private static readonly uint[] Side3Indices = [54, 55, 56, 57, 58, 59];
+        private static readonly uint[] Side4Indices = [60, 61, 62, 63, 64, 65];
         private readonly uint[] Side5Indices = [66, 67, 68, 69, 70, 71];
 
         private readonly List<uint> drawElementsList = [];

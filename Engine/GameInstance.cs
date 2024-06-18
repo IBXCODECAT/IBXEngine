@@ -3,9 +3,9 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
-using IBX_Engine.Graphics.Internal;
 using IBX_Engine.VoxelSystem;
 using IBX_Engine.Mathematics;
+using IBX_Engine.Graphics;
 
 namespace IBX_Engine
 {
@@ -57,6 +57,8 @@ namespace IBX_Engine
 
         private readonly List<Voxel> VoxelsToRender = [];
 
+        private Vec3 LightPosition = new(2f, 3f, -1.5f);
+
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -73,11 +75,8 @@ namespace IBX_Engine
 
             VoxelFaceFlags all = VoxelFaceFlags.TOP ^ VoxelFaceFlags.BOTTOM ^ VoxelFaceFlags.SIDE0 ^ VoxelFaceFlags.SIDE2 ^ VoxelFaceFlags.SIDE4;
 
-            VoxelsToRender.Add(new Voxel(Vec3.Zero, all, VoxelPropretiesFLags.NONE));
-            VoxelsToRender.Add(new Voxel(new Vec3(2, 0, 0), all, VoxelPropretiesFLags.NONE));
-            VoxelsToRender.Add(new Voxel(new Vec3(0, 0, 2), all, VoxelPropretiesFLags.NONE));
-
-            Logger.Log($"Voxel Byte {(byte)all}");
+            VoxelsToRender.Add(new Voxel(Vec3.Zero, VoxelFaceFlags.TOP ^ VoxelFaceFlags.BOTTOM, VoxelPropretiesFLags.NONE));
+            VoxelsToRender.Add(new Voxel(LightPosition, all, VoxelPropretiesFLags.NONE));
 
             // We initialize the camera so that it is 3 units back from where the rectangle is.
             // We also give it the proper aspect ratio.
@@ -99,7 +98,7 @@ namespace IBX_Engine
             shader.SetMatrix4("view", camera.GetViewMatrix());
             shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            shader.SetVector3("lightPos", new Vector3(2f, 3f, -1.5f));
+            shader.SetVector3("lightPos", LightPosition.AsOpenTKVector());
             shader.SetVector3("lightColor", new Vector3(1f, 1f, 1f));
             shader.SetVector3("viewPos", camera.Position);
 

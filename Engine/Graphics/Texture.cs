@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using StbImageSharp;
 
-namespace IBX_Engine.Graphics.Internal
+namespace IBX_Engine.Graphics
 {
     internal class Texture : IDisposable
     {
